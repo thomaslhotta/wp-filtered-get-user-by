@@ -1,0 +1,58 @@
+name: Run tests
+on: [push]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:latest
+        ports:
+          - 3306
+        env:
+          MYSQL_USER: default
+          MYSQL_PASSWORD: secret
+          MYSQL_DATABASE: test
+          MYSQL_ROOT_PASSWORD: password
+
+
+    steps:
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '7.4'
+        tools: pecl, composer
+        extensions: pcov-1.0.6
+
+    - name: Checkout Repository
+      uses: actions/checkout@v1
+
+    - name: Use Node.js
+      uses: actions/setup-node@v1
+
+    - name: Get Composer Cache Directory
+      id: composer-cache
+      run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+    - name: Cache dependencies
+      uses: actions/cache@v1
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+        restore-keys: ${{ runner.os }}-composer-
+
+    - name: Install Dependencies
+      run: composer install --dev
+
+    - name: Build WP
+      run : |
+        cd ./vendor/wordpress/wordpress
+        npm install
+        npm run build
+        ls -l
+
+    - name: Run PHPUnit
+      run: |
+        ./vendor/bin/phpunit

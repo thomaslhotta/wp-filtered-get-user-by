@@ -1,0 +1,25 @@
+{
+    "name": "thomaslhotta/wp-filtered-get-user-by",
+    "description": "Adds a filter to the WordPress get_user_by function.",
+    "config": {
+      "preferred-install": "dist"
+    },
+    "license": "MIT",
+    "require": {},
+    "autoload": {
+      "files": ["wp-filtered-get-user-by.php"]
+    },
+    "repositories": [
+      {
+        "type": "vcs",
+        "url": "https://github.com/WordPress/wordpress-develop.git"
+      }
+    ],
+    "require-dev": {
+      "wordpress/wordpress": "dev-master",
+      "phpunit/phpunit": "6.*",
+      "phpunit/phpcov": "4.*",
+      "pcov/clobber": "^2.0"
+    }
+
+}
